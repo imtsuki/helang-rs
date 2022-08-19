@@ -1,0 +1,18 @@
+program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
+stmt = _{ declStmt | assignStmt | printStmt | exprStmt }
+
+declStmt = { "u8" ~ ident ~ ("=" ~ literal)? }
+assignStmt = { expr ~ "=" ~ literal }
+printStmt = { "print" ~ expr }
+exprStmt = { expr }
+
+expr = _{ literal | indexExpr | ident }
+indexExpr = { ident ~ "[" ~ literal ~ "]" }
+
+literal = _{ array | number }
+number = @{ ASCII_DIGIT+ }
+array = { number ~ ("|" ~ number)+ }
+ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+WHITESPACE = _{ " " | "\t" }
+COMMENT = _{ "//" ~ (!"\n" ~ ANY)* }
