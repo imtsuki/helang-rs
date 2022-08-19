@@ -1,17 +1,11 @@
 u8 a = 1 | 2 | 3
-a
-u8 b = 4
-b
-a = 3 | 4 | 5
-a
-b = 6
-b
 a[0] = 1
 a
-a[0]
-a[1]
-a[2]
-a[0 | 1 | 2] = 0
-a
+
+u8 forceCon = [68]
+
+forceCon[1 | 2 | 6 | 7 | 11 | 52 | 57 | 58 | 65] = 10
+
+print forceCon
 
 test5g

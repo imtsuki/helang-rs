@@ -86,7 +86,7 @@ fn parse_expr(pair: Pair<Rule>) -> Result<Expr> {
             let literal = parse_literal(literal)?;
             Ok(Expr::Index(ident, literal))
         }
-        Rule::number | Rule::array => {
+        Rule::number | Rule::array | Rule::arrayByLength => {
             let literal = parse_literal(pair)?;
             Ok(Expr::Lit(literal))
         }
@@ -119,6 +119,11 @@ fn parse_literal(pair: Pair<Rule>) -> Result<Literal> {
                 array.push(number);
             }
             Ok(Literal::Array(array))
+        }
+        Rule::arrayByLength => {
+            let mut iter = pair.into_inner();
+            let length = iter.next().unwrap().as_str().parse::<i64>()?;
+            Ok(Literal::Array(vec![0; length as usize]))
         }
         _ => bail!("expected literal"),
     }

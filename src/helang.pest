@@ -10,9 +10,10 @@ test5gStmt = { "test5g" }
 expr = _{ literal | indexExpr | ident }
 indexExpr = { ident ~ "[" ~ literal ~ "]" }
 
-literal = _{ array | number }
+literal = _{ array | number | arrayByLength }
 number = @{ ASCII_DIGIT+ }
 array = { number ~ ("|" ~ number)+ }
+arrayByLength = { "[" ~ number ~ "]" }
 ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 
 WHITESPACE = _{ " " | "\t" }
