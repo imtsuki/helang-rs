@@ -9,22 +9,8 @@ use crate::ir::*;
 #[grammar = "helang.pest"]
 struct HelangParser;
 
-pub fn parse() -> Result<()> {
-    let pairs = HelangParser::parse(
-        Rule::program,
-        r#"
-        u8 a = 1 | 2 | 3
-        u8 b = 4
-        a = 3 | 4 | 5
-        b[1] = 3
-        b[2 | 3] = 4
-        print a
-        print b[2]
-        print b[3 | 4]
-        4
-        1 | 2 | 3
-    "#,
-    )?;
+pub fn parse(source: &str) -> Result<Vec<Stmt>> {
+    let pairs = HelangParser::parse(Rule::program, source)?;
     let mut stmts = vec![];
     for pair in pairs {
         match pair.as_rule() {
@@ -47,8 +33,7 @@ pub fn parse() -> Result<()> {
             _ => (),
         }
     }
-    println!("{:#?}", stmts);
-    Ok(())
+    Ok(stmts)
 }
 
 fn parse_decl_stmt(pair: Pair<Rule>) -> Result<Stmt> {
