@@ -19,4 +19,5 @@ pub enum Stmt {
     Decl(Ident, Literal),
     Assign(Expr, Literal),
     Print(Expr),
+    Test5G,
 }

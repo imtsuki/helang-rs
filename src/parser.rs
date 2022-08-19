@@ -30,6 +30,9 @@ pub fn parse(source: &str) -> Result<Vec<Stmt>> {
                 let stmt = parse_expr_stmt(pair)?;
                 stmts.push(stmt);
             }
+            Rule::test5gStmt => {
+                stmts.push(Stmt::Test5G);
+            }
             _ => (),
         }
     }

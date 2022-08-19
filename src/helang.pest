@@ -1,10 +1,11 @@
 program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
-stmt = _{ declStmt | assignStmt | printStmt | exprStmt }
+stmt = _{ declStmt | assignStmt | printStmt | test5gStmt | exprStmt }
 
 declStmt = { "u8" ~ ident ~ ("=" ~ literal)? }
 assignStmt = { expr ~ "=" ~ literal }
 printStmt = { "print" ~ expr }
 exprStmt = { expr }
+test5gStmt = { "test5g" }
 
 expr = _{ literal | indexExpr | ident }
 indexExpr = { ident ~ "[" ~ literal ~ "]" }

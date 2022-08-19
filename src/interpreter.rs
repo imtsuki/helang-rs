@@ -102,6 +102,9 @@ impl Interpreter {
                 let value = self.eval_expr(expr)?;
                 println!("{}", value);
             }
+            Stmt::Test5G => {
+                println!("很残念，你的电脑并没有配备 5G 芯片。");
+            }
         }
         Ok(())
     }
