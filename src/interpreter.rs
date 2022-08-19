@@ -1,9 +1,9 @@
-use crate::ir::*;
-use anyhow::anyhow;
-use anyhow::bail;
-use anyhow::Result;
 use std::collections::HashMap;
 use std::fmt;
+
+use anyhow::{anyhow, bail, Result};
+
+use crate::ir::*;
 
 pub struct Interpreter {
     globals: HashMap<String, Value>,
@@ -67,9 +67,18 @@ impl Interpreter {
                         match (index, value) {
                             (Value::Number(index), Value::Number(value)) => {
                                 if let Some(Value::Array(array)) = self.globals.get_mut(&ident.0) {
-                                    array.get_mut(index as usize).map(|v| *v = value).ok_or(
-                                        anyhow!("index {} out of bounds {}", index, array.len()),
-                                    )?;
+                                    if index == 0 {
+                                        array.fill(value);
+                                    } else {
+                                        array
+                                            .get_mut(index as usize - 1)
+                                            .map(|v| *v = value)
+                                            .ok_or(anyhow!(
+                                                "index {} out of bounds {}",
+                                                index,
+                                                array.len()
+                                            ))?;
+                                    }
                                 } else {
                                     bail!("assigning to non-array");
                                 }
@@ -77,13 +86,14 @@ impl Interpreter {
                             (Value::Array(indices), Value::Number(value)) => {
                                 if let Some(Value::Array(array)) = self.globals.get_mut(&ident.0) {
                                     for index in indices {
-                                        array.get_mut(index as usize).map(|v| *v = value).ok_or(
-                                            anyhow!(
+                                        array
+                                            .get_mut(index as usize - 1)
+                                            .map(|v| *v = value)
+                                            .ok_or(anyhow!(
                                                 "index {} out of bounds {}",
                                                 index,
                                                 array.len()
-                                            ),
-                                        )?;
+                                            ))?;
                                     }
                                 } else {
                                     bail!("assigning to non-array");
@@ -146,18 +156,24 @@ impl Interpreter {
             match var_ref {
                 VarRef::Ident(_) => Ok(value.clone()),
                 VarRef::Index(_, index) => match value {
-                    Value::Array(array) => Ok(Value::Number(*array.get(index).ok_or(anyhow!(
-                        "index {} out of bounds {}",
-                        index,
-                        array.len()
-                    ))?)),
+                    Value::Array(array) => {
+                        if index == 0 {
+                            Ok(Value::Array(array.clone()))
+                        } else {
+                            Ok(Value::Number(*array.get(index - 1).ok_or(anyhow!(
+                                "index {} out of bounds {}",
+                                index,
+                                array.len()
+                            ))?))
+                        }
+                    }
                     _ => bail!("indexing non-array"),
                 },
                 VarRef::Slice(_, indices) => match value {
                     Value::Array(array) => {
                         let mut result = Vec::new();
                         for index in indices {
-                            result.push(*array.get(index).ok_or(anyhow!(
+                            result.push(*array.get(index - 1).ok_or(anyhow!(
                                 "index {} out of bounds {}",
                                 index,
                                 array.len()

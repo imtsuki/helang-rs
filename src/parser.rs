@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use pest::iterators::Pair;
 use pest::Parser;
 use pest_derive::Parser;
@@ -90,7 +90,7 @@ fn parse_expr(pair: Pair<Rule>) -> Result<Expr> {
             let literal = parse_literal(pair)?;
             Ok(Expr::Lit(literal))
         }
-        _ => Err(anyhow::anyhow!("unexpected expr: {:?}", pair.as_str())),
+        _ => bail!("unexpected expr: {:?}", pair.as_str()),
     }
 }
 
@@ -99,7 +99,7 @@ fn parse_ident(pair: Pair<Rule>) -> Result<Ident> {
         let text = pair.as_str();
         Ok(Ident(text.to_string()))
     } else {
-        Err(anyhow::anyhow!("expected ident"))
+        bail!("expected ident")
     }
 }
 
@@ -120,6 +120,6 @@ fn parse_literal(pair: Pair<Rule>) -> Result<Literal> {
             }
             Ok(Literal::Array(array))
         }
-        _ => Err(anyhow::anyhow!("expected literal")),
+        _ => bail!("expected literal"),
     }
 }

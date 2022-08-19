@@ -1,6 +1,7 @@
+use std::io::Write;
+
 use anyhow::Result;
 use clap::Parser;
-use std::io::Write;
 
 mod interpreter;
 mod ir;
